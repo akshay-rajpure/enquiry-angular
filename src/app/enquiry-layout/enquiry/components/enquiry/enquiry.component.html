@@ -1,0 +1,269 @@
+<app-navigation></app-navigation>
+
+
+<div class="col-sm-12 mb-4">
+    <div class="card mt-2">
+        <!-- <div class="text-right" *ngIf="loggedInuserDetails.role ==='Admin'">
+            <button class="btn btn-success pull-right btn-width btn-sm mr-2 mt-2" (click)="addDonor()"><i
+                    class="fa fa-plus"></i> Add Donor</button>
+        </div> -->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="class row">
+                    <div class="class col-sm-12">
+                        <div class="card mt-4 mb-4 d-flex ml-2">
+                            <h3
+                                class="card-header light-blue lighten-1 white-text text-uppercase font-weight-bold text-center py-2">
+                                All Enquiry
+                            </h3>
+                            <div class="class row">
+                                <div class="class col-sm-6">
+                                    <input type="text" class="form-control w-25 ml-4" [(ngModel)]="searchTable"
+                                        placeholder=" Search here">
+                                </div>
+                                <div class="class col-sm-6 text-right" *ngIf="loggedInuserDetails.role ==='User'">
+                                    <button type="button" class="btn btn-outline-success mr-2"
+                                        data-mdb-ripple-color="dark" (click)="openAddEnqModal(EnquiryForm)">
+                                        <i class="fa fa-plus"></i> Add Enquiry
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">SR No</th>
+                                                <th scope="col">courseName</th>
+                                                <th scope="col">Subject</th>
+                                                <th scope="col">Enquiry Details</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">CreatedOn</th>
+                                                <th scope="col" *ngIf="loggedInuserDetails.role ==='Admin'">Edit |
+                                                    Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr
+                                                *ngFor="let data of allEnquiry |filter:searchTable| paginate: {id:'d-pagination',itemsPerPage:8, currentPage: enquiryPagination }; let i=index;trackBy: trackByMethod">
+                                                <td>{{i+1}}</td>
+                                                <td>{{data.courseName}}</td>
+                                                <td>{{data.subject}}</td>
+                                                <td>{{data.enquiryDetails}}</td>
+                                                <td> <span
+                                                        [ngClass]="data.status === 'Pending' ? 'dotGreen' : 'dotRed'"></span>&nbsp;{{data.status}}
+                                                </td>
+                                                <td>{{data.createdOn | date:'dd/MM/yyyy'}}</td>
+                                                <td *ngIf="loggedInuserDetails.role ==='Admin'"><span
+                                                        (click)="editEnquiry(data,null)"
+                                                        *ngIf="data.status==='Pending'"><i
+                                                            class="fas fa-edit text-danger pointer"
+                                                            ngbTooltip="Update Details"></i></span>
+                                                    &nbsp; <span (click)="openModal(data)" ngbTooltip="Delete Record"
+                                                        *ngIf="data.status==='Pending'"><i
+                                                            class="fas fa-trash-alt text-danger pointer"></i></span>
+                                                    &nbsp; <span (click)="editEnquiry(data,'readonly')"
+                                                        ngbTooltip="Show Enquiry" *ngIf="data.status==='Closed'"><i
+                                                            class="fas fa-eye text-primary pointer"></i></span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="col-sm-12 text-center mt-4">
+                                        <strong class="text-danger" *ngIf="allEnquiry && allEnquiry.length===0">No
+                                            Data
+                                            Found</strong>
+                                    </div>
+                                </div>
+                                <tfoot class="pull-right" *ngIf="allEnquiry.length>8">
+                                    <pagination-controls id="d-pagination" (pageChange)="enquiryPagination = $event">
+                                    </pagination-controls>
+                                </tfoot>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="class col-sm-12" *ngIf="loggedInuserDetails.role ==='Admin'">
+                        <div class="card mt-4 mb-4 d-flex ml-2">
+                            <h3
+                                class="card-header light-blue lighten-1 white-text text-uppercase font-weight-bold text-center py-2">
+                                Todays Enquiry
+                            </h3>
+                            <input type="text" class="form-control w-25 ml-4" [(ngModel)]="searchTable"
+                                placeholder=" Search here">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">SR No</th>
+                                                <th scope="col">courseName</th>
+                                                <th scope="col">Subject</th>
+                                                <th scope="col">Enquiry Details</th>
+                                                <th scope="col">CreatedOn</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr
+                                                *ngFor="let data of todaysEnquiry |filter:searchTable| paginate: {id:'d-pagination',itemsPerPage:8, currentPage: tdyenquiryPagination }; let i=index;trackBy: trackByMethod">
+                                                <td>{{i+1}}</td>
+                                                <td>{{data.courseName}}</td>
+                                                <td>{{data.subject}}</td>
+                                                <td>{{data.enquiryDetails}}</td>
+                                                <td>{{data.createdOn | date:'dd/MM/yyyy'}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="col-sm-12 text-center mt-4">
+                                        <strong class="text-danger" *ngIf="allEnquiry && allEnquiry.length===0">No
+                                            Data
+                                            Found</strong>
+                                    </div>
+                                </div>
+                                <tfoot class="pull-right" *ngIf="allEnquiry.length>8">
+                                    <pagination-controls id="d-pagination" (pageChange)="tdyenquiryPagination = $event">
+                                    </pagination-controls>
+                                </tfoot>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div bsModal #confirmationModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name2">
+    <div class="modal-dialog modal-warning">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="col-sm-12 text-center">
+                    <img src="../../../../../assets//images/warning.png" class="img-thumbnail"><br>
+                    <h2 class="text-danger">Do you really want to delete this enquiry?</h2>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" data-mdb-ripple-color="dark"
+                    (click)="deleteEnquiry()">
+                    yes
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-outline-danger" data-mdb-ripple-color="dark"
+                    (click)="confirmationModal.hide()">
+                    No thanks
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div bsModal #enquiryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name2">
+    <div class="modal-dialog modal-warning">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="card mt-4 mb-4 d-flex mr-2">
+                    <h3
+                        class="card-header light-blue lighten-1 white-text text-uppercase font-weight-bold text-center py-2">
+                        {{heading}}
+                    </h3>
+                    <div class="card-body">
+                        <form #EnquiryForm="ngForm">
+                            <div class="class row">
+                                <div class="class col-sm-6">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlSelect1">Course:<span
+                                                class="text-danger">*</span></label>
+                                        <select class="form-control" required
+                                            [ngClass]="[courseName.invalid && courseName.touched ? 'HasError' : '']"
+                                            required name="courseName" [(ngModel)]="EnquiryModel.courseName"
+                                            #courseName="ngModel" [disabled]="isDisabled">
+                                            <option value="">Select</option>
+                                            <option *ngFor="let type of courseNameList;trackBy: trackByMethod"
+                                                value="{{type.value}}">
+                                                {{type.value}}
+                                            </option>
+                                        </select>
+                                        <span class="text-danger"
+                                            *ngIf="courseName.touched && courseName.invalid">Please
+                                            select
+                                            course name</span>
+                                    </div>
+                                </div>
+                                <div class="class col-sm-6">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlSelect1">Status:<span
+                                                class="text-danger">*</span></label>
+                                        <select class="form-control" required
+                                            [ngClass]="[status.invalid && status.touched ? 'HasError' : '']" required
+                                            name="status" [(ngModel)]="EnquiryModel.status" #status="ngModel"
+                                            [disabled]="isDisabled">
+                                            <option value="">Select</option>
+                                            <option *ngFor="let type of statusList;trackBy: trackByMethod"
+                                                value="{{type.value}}">
+                                                {{type.value}}
+                                            </option>
+                                        </select>
+                                        <span class="text-danger" *ngIf="status.touched && status.invalid">Please
+                                            select
+                                            status</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlSelect1">Subject:<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" required placeholder="enter subject"
+                                            [ngClass]="[subject.invalid && subject.touched ? 'HasError' : '']" required
+                                            name="subject" [(ngModel)]="EnquiryModel.subject" #subject="ngModel"
+                                            autocomplete="off" [disabled]="isDisabled">
+                                        <span class="text-danger" *ngIf="subject.touched && subject.invalid">Please
+                                            enter
+                                            subject</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlSelect1">Details:<span
+                                                class="text-danger">*</span></label>
+                                        <textarea class="form-control" required
+                                            [ngClass]="[enquiryDetails.invalid && enquiryDetails.touched ? 'HasError' : '']"
+                                            name="enquiryDetails" [(ngModel)]="EnquiryModel.enquiryDetails"
+                                            placeholder="enquiry message" #enquiryDetails="ngModel" autocomplete="off"
+                                            rows="5" [disabled]="isDisabled"></textarea>
+                                        <span class="text-danger"
+                                            *ngIf="enquiryDetails.touched && enquiryDetails.invalid">Please enter
+                                            enquiry details</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr>
+                            <div class="row justify-content-center">
+                                <button type="button" class="btn btn-primary btn-sm" [disabled]="EnquiryForm.invalid "
+                                    (click)="CreateEnquiry(EnquiryForm.value,EnquiryForm)" *ngIf="!isUpdate"><i
+                                        class="fa fa-paper-plane"></i> Submit</button>&nbsp;
+                                <button type="button" class="btn btn-danger btn-sm" (click)="enquiryModal.hide()"><i
+                                        class="fa fa-times-circle"></i>
+                                    Close</button>
+                                <button type="button" class="btn btn-primary btn-sm"
+                                    [disabled]="EnquiryForm.invalid || isDisabled" (click)="UpdateEnquiry(EnquiryForm)"
+                                    *ngIf="isUpdate"><i class="fa fa-paper-plane"></i>
+                                    Update</button>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
